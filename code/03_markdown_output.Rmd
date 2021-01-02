@@ -10,45 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 Introduction
 
+![](https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_1.png)
+![](https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_2.gif)
 
-```{r fig1, echo = FALSE, fig.cap = "Some thoughts about Figure 1", out.width = '100%'}
-knitr::include_graphics('../plot_images/figure_1.png')
-```
-
-
-
-```{r fig2, echo = FALSE, fig.cap = "Some thoughts about Figure 2", out.width = '100%'}
-knitr::include_graphics('../plot_images/figure_2.gif')
-```
-
-
-
-```{r fig3, echo = FALSE, fig.cap = "Some thoughts about Figure 3", out.width = '100%'}
-knitr::include_graphics('../plot_images/figure_3.png')
-```
-
-
-
-```{r fig4, echo = FALSE, fig.cap = "Some thoughts about Figure 4", out.width = '100%'}
-knitr::include_graphics('../plot_images/figure_4.gif')
-```
-
-
-
-```{r fig5, echo = FALSE, fig.cap = "Some thoughts about Figure 5", out.width = '100%'}
-knitr::include_graphics('../plot_images/figure_5.png')
-```
-
-
-
-```{r fig6, echo = FALSE, fig.cap = "Some thoughts about Figure 6", out.width = '100%'}
-knitr::include_graphics('../plot_images/figure_6.png')
-```
-
-
-
-```{r fig7, echo = FALSE, fig.cap = "Some thoughts about Figure 7", out.width = '100%'}
-knitr::include_graphics('../plot_images/figure_7.png')
-```
-
-Conclusion:
