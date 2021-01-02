@@ -5,5 +5,29 @@ Dylan Blechner, Evan Weiss, and Greg Ackerman
 
 Introduction
 
-![](https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_1.png)
-![](https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_2.gif)
+<div class="figure">
+
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_1.png" alt="A caption" width="100%" />
+
+<p class="caption">
+
+A
+caption
+
+</p>
+
+</div>
+
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_2.gif" width="100%" />
+
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_3.png" width="100%" />
+
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_4.gif" width="100%" />
+
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_5.png" width="100%" />
+
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_6.png" width="100%" />
+
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_7.png" width="100%" />
+
+Conclusion:
