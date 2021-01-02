@@ -2,7 +2,7 @@
 title: "Big Data Bowl 2021"
 author: "Dylan Blechner, Evan Weiss, and Greg Ackerman"
 date: "1/2/2021"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
