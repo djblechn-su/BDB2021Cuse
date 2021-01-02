@@ -1,7 +1,8 @@
-# Animate/Plot Play
+# Animate/Plot Play - Based on work from https://www.kaggle.com/adamsonty/nfl-big-data-bowl-a-basic-field-control-model
 
 bdb_animate_plot_field <- function(example_play, example_play_control, method = 'animate'){
   
+  # function to plot a general football field
   plot_field <- function(field_color = "#009A17", # #ffffff
                          line_color = "#ffffff", # #212529
                          number_color = "#ffffff") { # #adb5bd
@@ -67,6 +68,7 @@ bdb_animate_plot_field <- function(example_play, example_play_control, method = 
     return(field)
   }
   
+  # extract los, first down line, and team colors (changed JAX black to white for readability)
   line_of_scrimmage = example_play$los_x
   to_go_line = line_of_scrimmage + unique(example_play$yardsToGo)
   df_colors = data.frame(home_1 = unique(example_play$home_team_color2)[1],
@@ -74,6 +76,7 @@ bdb_animate_plot_field <- function(example_play, example_play_control, method = 
                          away_1 = unique(example_play$away_team_color1)[1],
                          away_2 = unique(example_play$away_team_color2)[1])
   
+  # allows for snapshot at the snap, total play animation, and field control animation
   if(method == 'animate'){
     play_frames <- plot_field() + 
       # line of scrimmage
@@ -192,6 +195,7 @@ bdb_animate_plot_field <- function(example_play, example_play_control, method = 
         fill = df_colors$home_1, colour = df_colors$home_2,
         shape = 21, alpha = 1, size = 8, stroke = 1.5
       ) +
+      # rules-based position and player name
       geom_text(
         data = example_play %>% dplyr::filter(team_name == unique(example_play$homeTeamAbbr)),
         mapping = aes(x = x, y = y, label = rules_pos),

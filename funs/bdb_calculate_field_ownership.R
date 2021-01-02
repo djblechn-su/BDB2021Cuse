@@ -3,6 +3,7 @@
 bdb_calculate_field_ownership <- function(model, data){
   control_list <- {}
   
+  # filter frame at throw
   play <- data %>%
     group_by(gameId, playId) %>%
     dplyr::filter(frameId == max(frameId[!(displayName %in% c('football', 'Football'))])) %>%
@@ -10,15 +11,18 @@ bdb_calculate_field_ownership <- function(model, data){
     ungroup() %>%
     group_split(gameId, playId)
   
+  # field boundaries
   xmin <- 0
   xmax <- 160/3
   
   for(i in 1:length(play)){
+    # subset data
     beaten <- play[[i]] %>%
       arrange(nflId) %>%
       dplyr::rename(x_pos = y, y_pos = x) %>%
       select(gameId, playId, nflId, displayName, jerseyNumber, team, x_pos, y_pos, s, dir)
     
+    # calculate angle
     find_angle <- function(x0, y0, x1, y1, dir){
       init_angle <- dir * pi / 180
       diff_x <- x1 - x0; diff_y <- y1 - y0
@@ -26,18 +30,23 @@ bdb_calculate_field_ownership <- function(model, data){
             diff_x * cos(init_angle) + diff_y * sin(init_angle))
     }
     
+    # add 5 yards beyond deepest defender and 2.5 yards behind QB (or deepest player behind the LOS)
     ymin <- max(round(min(play[[i]]$x, na.rm = TRUE) - 2.5, -1), 0)
     ymax <- min(round(max(play[[i]]$x, na.rm = TRUE) + 5, -1), 120)
     
+    # expand field by half-yard segments in the x and y directions (0.25 square yards)
     discretized_field <- expand.grid(x1 = seq(xmin, xmax, by = 0.5), y1 = seq(ymin, ymax, by = 0.5))
     
+    # filter out ball
     player_expanded <- expand.grid.df(beaten %>% dplyr::filter(!(displayName %in% c("football", "Football"))), discretized_field)
     
+    # calculate distance, angle, rename speed
     player_expanded <- player_expanded %>%
       mutate(distance = sqrt((x1 - x_pos) ^ 2 + (y1 - y_pos) ^ 2),
              angle = find_angle(x_pos, y_pos, x1, y1, dir)) %>%
       dplyr::rename(speed = s)
     
+    # determine field ownership by quarter square yard
     times <- model %>%
       predict(player_expanded %>%
                 select(distance, speed, angle) %>%
@@ -45,6 +54,7 @@ bdb_calculate_field_ownership <- function(model, data){
     
     player_expanded$time <- times[,1]
     
+    # aggregate field ownership by player in terms of percentage of field and total field (yards)
     control_list[[i]] <- player_expanded %>%
       group_by(x1, y1) %>%
       arrange(time) %>%
