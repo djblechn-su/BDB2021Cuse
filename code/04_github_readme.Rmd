@@ -1,0 +1,54 @@
+---
+title: "Big Data Bowl 2021"
+author: "Dylan Blechner, Evan Weiss, and Greg Ackerman"
+date: "1/2/2021"
+output: github_document
+knit: (function(inputFile, encoding) {rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'README.md'), output_dir = getwd())})
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Introduction
+
+```{r fig1, echo = FALSE, fig.cap = "A caption", out.width = '100%'}
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_1.png')
+```
+
+
+
+```{r fig2, echo = FALSE, fig.cap = "", out.width = '100%'}
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_2.gif')
+```
+
+
+
+```{r fig3, echo = FALSE, fig.cap = "", out.width = '100%'}
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_3.png')
+```
+
+
+
+```{r fig4, echo = FALSE, fig.cap = "", out.width = '100%'}
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_4.gif')
+```
+
+
+
+```{r fig5, echo = FALSE, fig.cap = "", out.width = '100%'}
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_5.png')
+```
+
+
+
+```{r fig6, echo = FALSE, fig.cap = "", out.width = '100%'}
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_6.png')
+```
+
+
+
+```{r fig7, echo = FALSE, fig.cap = "", out.width = '100%'}
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_7.png')
+```
+
+Conclusion:
