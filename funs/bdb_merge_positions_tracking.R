@@ -11,7 +11,7 @@ bdb_merge_positions_tracking <- function(df_tracking, df_positions, position_mod
                   position_clustered == 3 ~ 'S',
                   position_clustered == 4 ~ 'NB',
                   TRUE ~ ''
-                )), by = 'nflId')
+                )), by = 'nflId') # merge positions and change cluster numbers to corresponding position labels
   
   return(df_tracking)
 }

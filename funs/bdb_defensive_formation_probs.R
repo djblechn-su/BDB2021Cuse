@@ -75,6 +75,7 @@ bdb_defensive_formation_probs <- function(df_plays, df_tracking, df_preds){
       )) %>%
     mutate_all(list(~na_if(., -1))) %>%
     group_by(gameId, playId) %>%
+    # Calculate Probability of Each Defensive Formation - Avg Value of all players (for Cover 3 and Cover 6 zone, rescale to 2/3)
     summarise(cover_0_man_prob = mean(cover_0_man_prob, na.rm = T),
               cover_1_man_prob = mean(cover_1_man_prob, na.rm = T),
               cover_2_man_prob = mean(cover_2_man_prob, na.rm = T),

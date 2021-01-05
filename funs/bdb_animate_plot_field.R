@@ -135,7 +135,7 @@ bdb_animate_plot_field <- function(example_play, example_play_control, method = 
         shape = 21, alpha = 1, size = 4, stroke = 1
       ) +
       # title 
-      labs(title = 'Figure 2 - Play Animation: PIT @ JAX, November 18, 2018\n',
+      labs(title = 'Figure 3 - Play Animation: PIT @ JAX, November 18, 2018\n',
            subtitle = '(1:16 - Q2) PIT 37 - B.Roethlisberger pass deep right intended for A.Brown \nINTERCEPTED by B.Church [Y.Ngakoue] at JAX 43.\n B.Church to PIT 46 for 11 yards (J.Conner).') +
       theme(plot.title = element_text(face = "bold"),
             plot.subtitle = element_text(hjust = 0.5)) +

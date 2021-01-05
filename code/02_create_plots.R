@@ -18,7 +18,6 @@ for(i in 1:length(list.files(path = './plot_data/'))){
   assign(gsub('.RDS', '', list.files(path = './plot_data/')[i]), readRDS(paste0('./plot_data/', list.files(path = './plot_data/')[i])))
 }
 
-
 # example play
 # https://www.youtube.com/watch?v=FueeYXD8yFY&feature=onebox (3:56)
 
@@ -46,13 +45,8 @@ figure_1 <- ggarrange(plot_1_1, plot_1_2, labels = c('1A', '1B'), ncol = 2, nrow
 
 figure_1
 
-# plot 2 - defensive coverage animation
-figure_2 <- bdb_animate_plot_field(example_play, example_play_control, 'animate')
-
-figure_2
-
-# plot 3.1 - neural network importance
-plot_3_1 <- data_3_1 %>%
+# plot 2.1 - neural network importance
+plot_2_1 <- data_2_1 %>%
   ggplot(aes(x = reorder(var, value), y = value)) +
   coord_flip() +
   geom_linerange(aes(ymin = 0, ymax = value), size = 1.5, color = 'grey') +
@@ -63,8 +57,8 @@ plot_3_1 <- data_3_1 %>%
        y = 'Variable Importance') +
   theme_bw()
 
-# plot 3.2 - confusion matrix
-plot_3_2 <- data_3_2 %>%
+# plot 2.2 - confusion matrix
+plot_2_2 <- data_2_2 %>%
   ggplot(aes(x = actual, y = pred)) +
   geom_tile(aes(fill = n), colour = 'white') +
   geom_text(aes(label = n), vjust = 1, color = 'black') +
@@ -73,12 +67,17 @@ plot_3_2 <- data_3_2 %>%
        y = 'Actual Coverage') +
   theme_bw()
 
-# plot 3 - combined
-figure_3 <- ggarrange(plot_3_1, plot_3_2, labels = c('3A', '3B'), ncol = 2, nrow = 1) %>%
+# plot 2 - combined
+figure_2 <- ggarrange(plot_2_1, plot_2_2, labels = c('2A', '2B'), ncol = 2, nrow = 1) %>%
   annotate_figure(top = text_grob(expression(atop(bold('Individual Coverage Model'),
-                                                  '\nTop 15 Most Important Variables (3A) and Confusion Matrix (3B)')),
+                                                  '\nTop 15 Most Important Variables (2A) and Confusion Matrix (2B)')),
                                   size = 12, lineheight = 1.25),
-                  fig.lab = 'Figure 3', fig.lab.face = 'bold')
+                  fig.lab = 'Figure 2', fig.lab.face = 'bold')
+
+figure_2
+
+# plot 3 - defensive coverage animation
+figure_3 <- bdb_animate_plot_field(example_play, example_play_control, 'animate')
 
 figure_3
 
@@ -184,18 +183,18 @@ figure_7
 
 # Save PDFs
 ggsave('./plot_images/figure_1.pdf', figure_1, width = 12, height = 5, units = 'in')
-ggsave('./plot_images/figure_3.pdf', figure_3, width = 12, height = 5, units = 'in')
+ggsave('./plot_images/figure_2.pdf', figure_2, width = 12, height = 5, units = 'in')
 ggsave('./plot_images/figure_5.pdf', figure_5, width = 13, height = 7, units = 'in')
 ggsave('./plot_images/figure_6.pdf', figure_6, width = 13, height = 7, units = 'in')
 ggsave('./plot_images/figure_7.pdf', figure_7, width = 8, height = 5, units = 'in')
 
 # Save Images
 ggsave('./plot_images/figure_1.png', figure_1, width = 12, height = 5, units = 'in')
-ggsave('./plot_images/figure_3.png', figure_3, width = 12, height = 5, units = 'in')
+ggsave('./plot_images/figure_2.png', figure_2, width = 12, height = 5, units = 'in')
 ggsave('./plot_images/figure_5.png', figure_5, width = 13, height = 7, units = 'in')
 ggsave('./plot_images/figure_6.png', figure_6, width = 13, height = 7, units = 'in')
 ggsave('./plot_images/figure_7.png', figure_7, width = 8, height = 5, units = 'in')
 
 # Save GIFS
-anim_save('./plot_images/figure_2.gif', figure_2)
+anim_save('./plot_images/figure_3.gif', figure_3)
 anim_save('./plot_images/figure_4.gif', figure_4)

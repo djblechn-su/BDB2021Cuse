@@ -17,12 +17,12 @@ bdb_create_training_data <- function(df_tracking_model){
                   'closest_offensive_player_changes', 'closest_defensive_player_changes',
                   'pre_play_motion', 'position', 'position_clustered', 'prob_lb', 'prob_nb', 'prob_cb', 'prob_s',
                   'offensive_formation', 'offensive_personnel', 'defensive_personnel',
-                  'defenders_in_box', 'number_pass_rushers', 'field_strength')
+                  'defenders_in_box', 'number_pass_rushers', 'field_strength') # model vars
   
   df_train <- df_tracking_model %>%
     select(c('player_coverage', all_of(model_vars), 'gameId', 'playId', 'nflId')) %>%
-    dplyr::filter(player_coverage != '') %>%
-    mutate_if(is.character, as.factor)
+    dplyr::filter(player_coverage != '') %>% # filter out plays where coverage isn't given
+    mutate_if(is.character, as.factor) # character to factor
   
   return(df_train)
 }

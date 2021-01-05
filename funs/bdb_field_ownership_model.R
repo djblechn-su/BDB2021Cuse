@@ -1,6 +1,7 @@
 # Field Ownership - Run Field Ownership Model (Source: https://github.com/burrisk/Big-Data-Bowl)
 
 bdb_field_ownership_model <- function(e){
+  # Functions Taken from Kyle Burris' Field Ownership Model https://github.com/burrisk/Big-Data-Bowl
   bounds <- c(2, 2, 9, 2 * pi)
   
   time <- function(route_pars, start_pos, end_pos, bounds, inits, gradient = T){

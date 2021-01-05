@@ -18,9 +18,9 @@ caption
 
 </div>
 
-<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_2.gif" width="100%" />
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_2.png" width="100%" />
 
-<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_3.png" width="100%" />
+<img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_3.gif" width="100%" />
 
 <img src="https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_4.gif" width="100%" />
 

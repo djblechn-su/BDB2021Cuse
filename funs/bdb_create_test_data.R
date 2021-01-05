@@ -17,11 +17,11 @@ bdb_create_test_data <- function(df_tracking_model){
                   'closest_offensive_player_changes', 'closest_defensive_player_changes',
                   'pre_play_motion', 'position', 'position_clustered', 'prob_lb', 'prob_nb', 'prob_cb', 'prob_s',
                   'offensive_formation', 'offensive_personnel', 'defensive_personnel',
-                  'defenders_in_box', 'number_pass_rushers', 'field_strength')
+                  'defenders_in_box', 'number_pass_rushers', 'field_strength') # model variables
   
   df_test <- df_tracking_model %>%
     select(c('player_coverage', all_of(model_vars), 'gameId', 'playId', 'nflId')) %>%
-    dplyr::filter(is.na(player_coverage)) %>%
+    dplyr::filter(is.na(player_coverage)) %>% # remove plays where coverage is given
     mutate(position = case_when(position %in% c('WR', 'TE') ~ 'FS', position == 'DT' ~ 'NT', TRUE ~ position),
            offensive_formation = ifelse(offensive_formation == 'JUMBO', 'UNKNOWN', offensive_formation),
            offensive_personnel = case_when(offensive_personnel == '1 RB, 2 TE, 1 WR,1 DL' ~ '2 RB, 2 TE, 1 WR',
@@ -62,9 +62,9 @@ bdb_create_test_data <- function(df_tracking_model){
                                            defensive_personnel == '4 DL, 2 LB, 4 DB' ~ '4 DL, 2 LB, 5 DB',
                                            defensive_personnel == '7 DL, 3 LB, 1 DB' ~ '5 DL, 2 LB, 4 DB',
                                            defensive_personnel == '1 DL, 2 LB, 7 DB' ~ '1 DL, 3 LB, 7 DB',
-                                           TRUE ~ defensive_personnel)) %>%
-    mutate_if(is.character, as.factor) %>%
-    dplyr::filter(complete.cases(.[,-1]))
+                                           TRUE ~ defensive_personnel)) %>% # change factor vars not in training data to similar values (formation and personnel)
+    mutate_if(is.character, as.factor) %>% # convert character vars to factor for model
+    dplyr::filter(complete.cases(.[,-1])) # filter out incomplete cases
   
   return(df_test)
 }

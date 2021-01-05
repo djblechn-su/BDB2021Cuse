@@ -1,7 +1,7 @@
 ---
-title: "Big Data Bowl 2021"
+title: "Quantifying Pass Coverage in the NFL with Field Ownership Above Expected"
 author: "Dylan Blechner, Evan Weiss, and Greg Ackerman"
-date: "1/2/2021"
+date: "1/4/2021"
 output: github_document
 knit: (function(inputFile, encoding) {rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'README.md'), output_dir = getwd())})
 ---
@@ -9,46 +9,82 @@ knit: (function(inputFile, encoding) {rmarkdown::render(inputFile, encoding = en
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-Introduction
+
+## I. Introduction
+
+The NFL is becoming more and more pass heavy. As a result, substantial public work has been done to evaluate Quarterbacks, Wide Receivers, and pass offenses as a whole. However, there has been limited work done focusing on quantifying pass coverage. Thanks to NFL’s Next Gen Stats data that was provided through this competition we were able to evaluate the production of defensive players while in pass coverage. 
+
+The main purpose of this paper is to expand upon previous research in the area of field ownership, and to see which defensive players are able to outperform expectations. We built several models to predict expected field ownership including a positional clustering model, an individual coverage neural network, and a rules-based team coverage model. We also used our findings to evaluate which defenders were best against the pass during the 2018 season at the time of throw.
+
+## II. Identifying Individual Defensive Coverage
+
+We developed a multi-class classification model to predict each individual defender’s coverage as deep zone, underneath zone, or man based upon a summary of player actions at the snap, throw, how the player relates to the other defenders on the field, and a derived player position. Defining positions was a priority, as the NFL-listed positions provided several inconsistencies. We began with a rules-based approach to assign positions:
+
+*	**Outside Cornerbacks** as the defender closest to each sideline
+*	In a single high formation (only one safety lined up deep):
++	The **Free Safety** is a safety lined up more than 11 yards away from the line of scrimmage
++	The **Strong Safety** is a safety playing 9-11 yards away from the line of scrimmage
+*	In a two-high safety formation:
++	The **Free Safety** is lined up on the "strong" side (more receivers lined up) 
++	The **Strong Safety** is lined up on the “weak” side (fewer receivers lined up)
++	In a balanced offensive formation, both deep safeties are considered **Free Safeties**
+*	**Nickelbacks** as defenders with a y-coordinate within 1.5 yards of a receiver (while not being lined up as an Outside Cornerback or Safety)
+*	**Outside Linebackers** are players lined up outside the hashes (shallower than safeties, while also not being lined up as an Outside Corner or Nickelback)
+*	**Inside Linebackers** are players lined up between the hashes (shallower than safeties)
+
+We then used each player’s rule-based position frequencies, and utilized a Gaussian Mixture Model (GMM) to assign positional clusters. One of the advantages of using a GMM is it provides the probability of being assigned to each possible cluster. This allowed us to have more precise measurements moving forward. We were able to define Cluster 1 as Cornerbacks (players in this cluster lined up at Outside Cornerback on 90% of snaps), Cluster 2 as Linebackers (47% Inside Linebacker and 32% Outside Linebacker), Cluster 3 as Safeties (38% Free Safety and 17% Strong Safety), and Cluster 4 as Nickelbacks (53% Nickelback). It is worth noting that Safeties frequently lined-up in several different positions which makes sense as teams utilize these players in unique ways.  
+
+Figure 1A shows each player’s position based on our rules-based methodology for an example play between the [Pittsburgh Steelers and Jacksonville Jaguars](https://www.jaguars.com/video/church-reads-big-ben-for-another-jaguars-int). Each defensive player is lined up in their natural position except for Barry Church who pushes forward from his typical Safety position to play Outside Linebacker. Figure 1B shows the breakdown of each positional cluster based on the percentage of snaps lined up at each rules-based position.
 
 ```{r fig1, echo = FALSE, fig.cap = "A caption", out.width = '100%'}
 knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_1.png')
 ```
 
+We began identifying the coverage that each defensive player was in through a rules-based approach. [Telemetry](https://www.kaggle.com/tombliss/additional-data-coverage-schemes-for-week-1) provided coverage data for week 1, and we assigned roles to each player on defense based on what the team coverage was for that play. For example, if a player lined up as a deep safety when the team was in Cover 1 Man, we would classify them as being in a deep zone. All defenders withing 8 yards of the Quarterback at the time of throw were considered blitzers and were removed from analysis. Plays that started inside of the opponent's 12-yard line, plays that did not include exactly one quarterback, plays with a special team player, and plays with fewer than 15 frames or more than 55 frames were all removed from analysis to account for limited field spacing, trick plays, quick passes, and long Quarterback scrambles. We then trained a neural network to classify the coverage role of each defensive player (man, underneath zone, and deep zone). We took inspiration from the work of [Dutta, Yurko, and Ventura](https://arxiv.org/pdf/1906.11373.pdf) in the process of feature engineering and expanded on their work by defining the field and boundary based on where the ball is placed. The boundary is considered the short side of the field, and the field is considered the long side. We then determined the number of offensive and defensive players on the field and boundary sides as well as the distance from the field and boundary sideline for each player at the snap and throw. The inclusion of such features helps to account for adjustments made by coaches after seeing the number of players lined up on the field and boundary sides.
 
+We tuned the neural network using the [Caret](http://topepo.github.io/caret/index.html) package in R (with 10-fold cross validation repeated 5 times), and used a final model that had 9 hidden layers and 0.3 decay. The most important variables for this model are provided in Figure 2A. As can be seen in Figure 2B, this model does a good job predicting the individual coverage for each player.
 
 ```{r fig2, echo = FALSE, fig.cap = "", out.width = '100%'}
-knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_2.gif')
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_2.png')
 ```
 
-
+In the example play between the Steelers and Jaguars in Figure 3, the success of the model can be seen in the prediction of the individual coverages. Our model predicted that Barry Church (#42), Tashaun Gipson (#39), and A.J. Bouye (#21) were all in deep zone coverage, D.J. Hayden (#25), Telvin Smith (#50), and Myles Jack (#44) were in underneath zone coverage, and Jalen Ramsey (#20) was in man coverage. Our model also provides the probability of each coverage for each player. For example, Jalen Ramsey's coverage is the most uncertain with the model estimating a 55.23% likelihood of being man coverage and a 37.85% likelihood of being deep zone coverage. These probabilities were utilized to estimate the likelihood of a team being in a specific coverage, with the Jaguars having a 21.13% chance of being in Cover 4 Zone, and a 19.88% chance of being in Cover 3 Zone.
 
 ```{r fig3, echo = FALSE, fig.cap = "", out.width = '100%'}
-knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_3.png')
+knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_3.gif')
 ```
 
+## III. Which Defenders Best Limit Space?
 
+We evaluated coverage efficiency through the application of [Kyle Burris’ Space Ownership model](https://operations.nfl.com/media/3665/big-data-bowl-burris.pdf) from the 2019 Big Data Bowl. Burris’ model does an excellent job of quantifying space ownership by evaluating the time it will take for each player to get to each location on the field. While this tells a story in itself, game situations can dictate the aggressiveness of defenders, and henceforth not all space ownership is created equally. To compute an expected space ownership model, we utilized a random forest where our response variable is the percentage of the field that the defender owns. In this model we accounted for the current state of the game using multiple variables (opponent, down, distance, field position, and win probability). We also accounted for aspects of the play that would impact the players coverage responsibility (individual coverage, and position cluster probabilities). We also included the overall coverage of the defense to account for the responsibilities of the other players. Finally, we included the offensive and defensive formation to account for personnel on the field. The actual field ownership can be subtracted from the expected value to create field ownership above expected.
+
+Figure 4 is an example of a play in which space ownership is exemplified. Jalen Ramsey covers Antonio Brown (#84) for the majority of the play, however does allow some space to Brown. Barry Church, however, applied additional coverage in the secondary behind Jalen Ramsey and intercepted the pass. Based on the game situation, Church was only expected to own about 4.3% of the field, but actually owned 7.8% of the field at time of the throw, for an FOAE (field ownership above expected) of 3.52%. Roethlisberger made an errant throw, but Church’s correct read turned a possible incompletion into an easy interception.
 
 ```{r fig4, echo = FALSE, fig.cap = "", out.width = '100%'}
 knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_4.gif')
 ```
 
+Figure 5 shows the top 5 field owners by clustered position during the 2018 season (minimum of 275 snaps). Among the top 5 outside cornerbacks, Trae Waynes had the highest average FOAE at 0.33%, with Shareece Wright not far behind. Wright had a higher overall field ownership than Waynes, but he was put in positions where more coverage was expected. We see in Figure 6 that Wright is actually a top-2 field owning cornerback in both deep zone and man coverage, and even performed better than Waynes (#2) in man coverage. Observed field ownership handily favors Wright as the top cornerback in the league, however by including all coverage types and context, we believe Trae Waynes was the most effective cornerback in limiting receiver space at the time of the throw. 
 
+Generally speaking, Safeties (7.66% expected field ownership) and Linebackers (7.65%) cover less ground than Nickelbacks (8%) and Cornerbacks (8.33%) when not blitzing the Quarterback. Underneath zone coverage (8.2%) has the highest expected field ownership across all four positions, with man and zone falling at 7.68% and 7.59%, respectively. Deep zones are cut off for Safeties as the field ownership is calculated only for 5 yards beyond the last defender to avoid giving additional credit to deep safeties who may guard empty space that is not occupied by any offensive player. If this cutoff was removed, we would expect Safeties and those in deep zone coverage to have a higher average expected field ownership. As it is, Cornerbacks and Nickelbacks cover the most ground as well as those in underneath zone coverage.
 
 ```{r fig5, echo = FALSE, fig.cap = "", out.width = '100%'}
 knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_5.png')
 ```
 
-
+Figure 6 shows the top field owners by position and coverage type. Desmond King and Anthony Brown played the majority of their snaps in Underneath Zone, the highest frequencies among all position groups. The top performing Nickelbacks had comparably low FOAEs in man coverage, and were expected to have a low field ownership to begin with, such that we believe Nickelbacks should be heavily scrutinized for their Underneath Zone abilities. Additionally, 4 of the top 5 performing players by coverage type were in Underneath Zone defense, but none of Williams, Mingo, Woods, nor Barr were amongst top 25 overall FOAE players in Figure 5, exemplifying that the best overall coverage players excel in multiple forms of coverage.
 
 ```{r fig6, echo = FALSE, fig.cap = "", out.width = '100%'}
 knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_6.png')
 ```
 
-
+Figure 7 shows the relationship between defensive expected points added and field ownership. At the team level, there is not a straightforward relationship between field ownership and expected points allowed. This study is agnostic to the pass rush, which plays a heavy influence on a Quarterback’s ability to complete passes. In addition, while space ownership is important, tackling ability and ball arrival defense are also important in determining the end result of a pass. Lastly, NFL receivers can make catches in limited space, and defenses must game plan for outstanding receivers. The results of field ownership for man have a wider variation than zone defense, which we hypothesize is a result of man defense potentially being more of a risk-reward coverage than zone. 
 
 ```{r fig7, echo = FALSE, fig.cap = "", out.width = '100%'}
 knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_7.png')
 ```
 
-Conclusion:
+## IV. Conclusions and Areas of Further Study
+
+We were able to create a new metric (Field Ownership Above Expected) that expands upon previous research in the area of space ownership. We were able to do this by accounting for the position each player plays, based on our positional clustering, as well as our individual and team coverage models. Knowing this, it is important to consider that field ownership is only one component of the responsibilities of defenders in coverage. Further study of defense once the ball is in the air, defense at ball arrival, tackling, and penalty aversion would help develop an all-inclusive metric of pass defense ability.
+

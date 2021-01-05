@@ -24,7 +24,7 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
            team_name = case_when(team == "home" ~ homeTeamAbbr, team == "away" ~ visitorTeamAbbr, TRUE ~ team),
            poss_team = ifelse(route != '' | position == 'QB', 1, NA),
            los_x = ifelse(team_name == 'football' & frameId == frameId[event == 'ball_snap'][1], x, NA),
-           los_y = ifelse(team_name == 'football' & frameId == frameId[event == 'ball_snap'][1], y, NA))
+           los_y = ifelse(team_name == 'football' & frameId == frameId[event == 'ball_snap'][1], y, NA)) # calculate variables for example play for all frames
   
   example_play <- example_play %>% 
     bind_rows(example_play_full %>% filter(!(frameId %in% example_play$frameId))) %>%
@@ -35,14 +35,14 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
                        home_team_color2 = team_color2,
                        home_team_color3 = team_color3,
                        home_team_color4 = team_color4),
-              by = c('homeTeamAbbr' = 'team_abbr')) %>%
+              by = c('homeTeamAbbr' = 'team_abbr')) %>% # join home nfl colors
     left_join(nflfastR::teams_colors_logos %>%
                 select(team_abbr,
                        away_team_color1 = team_color,
                        away_team_color2 = team_color2,
                        away_team_color3 = team_color3,
                        away_team_color4 = team_color4),
-              by = c('visitorTeamAbbr' = 'team_abbr')) %>%
+              by = c('visitorTeamAbbr' = 'team_abbr')) %>% # join away nfl colors
     left_join(example_play %>%
                 dplyr::filter(event == "ball_snap", poss_team == 0, !is.na(nflId)) %>%
                 arrange(gameId, playId, y) %>%
@@ -103,7 +103,7 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
                          Safety == 'Nickelback' ~ 'NB',
                          # Safety %in% c('ILB', 'OLB') ~ 'LB',
                          TRUE ~ Safety)) %>%
-                select(nflId = nflId_def, rules_pos = FinalPlayPosition)) %>%
+                select(nflId = nflId_def, rules_pos = FinalPlayPosition)) %>% # calculate positions
     mutate(rules_pos = ifelse(is.na(rules_pos), position, rules_pos))
   
   
@@ -160,7 +160,7 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
   
   example_play_control <- do.call('rbind', control_list)
   
-  # Plot 1.2 Data
+  # Plot 1.2 Data - Clustred Positions by Positional Lineup
   data_1_2 <- df_positions %>%
     inner_join(df_tracking_vars %>% select(nflId, position_clustered), by = 'nflId') %>%
     group_by(position_clustered) %>%
@@ -175,8 +175,8 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
                            var == 'ss_pct' ~ 'SS',
                            TRUE ~ ''))
   
-  # Plot 3.1 Data
-  data_3_1 <- data.frame(var = row.names(varImp(mod_coverage, scale = F)[[1]]), value = varImp(mod_coverage, scale = F)[[1]][, 1]) %>%
+  # Plot 2.1 Data - Top 15 Most Important Vars
+  data_2_1 <- data.frame(var = row.names(varImp(mod_coverage, scale = F)[[1]]), value = varImp(mod_coverage, scale = F)[[1]][, 1]) %>%
     remove_rownames() %>%
     mutate(var = gsub('?([A-Z0-9]).*', '', var)) %>%
     group_by(var) %>%
@@ -190,8 +190,8 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
                            var == 'Prob Lb' ~ 'Prob LB',
                            TRUE ~ var))
   
-  # Plot 3.2 Data
-  data_3_2 <- df_preds %>%
+  # Plot 2.2 Data - Confusion Matrix
+  data_2_2 <- df_preds %>%
     filter(actual != '') %>%
     group_by(actual, pred) %>%
     summarise(n = n()) %>%
@@ -199,7 +199,7 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
     mutate(actual = str_to_title(gsub('_', ' ', actual)),
            pred = str_to_title(gsub('_', ' ', pred)))
   
-  # Plot 5.1 Data
+  # Plot 5.1 Data - Field Ownership Table - By Position
   data_5_1 <- df_foae %>%
     group_by(nflId, displayName, team_name, position_clustered, position) %>%
     summarise(avg_efo = mean(foae, na.rm = T),
@@ -215,7 +215,7 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
     select('Player' = displayName, 'Clustered Position' = position_clustered,
            'Team' = team_name, 'Avg. EFO' = avg_efo, 'Avg. FOAE' = avg_foae, 'Snaps' = snaps)
   
-  # Plot 5.2 Data
+  # Plot 5.2 Data - Field Ownership Plot - By Position
   data_5_2 <- df_foae %>%
     group_by(nflId, displayName, team_name, position_clustered, position) %>%
     summarise(avg_foae = mean(control_pct - foae, na.rm = T),
@@ -225,7 +225,7 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
     ungroup() %>%
     slice(1:25)
   
-  # Plot 6.1 Data
+  # Plot 6.1 Data - Field Ownership Table - By Position and Coverage
   data_6_1 <- df_foae %>%
     group_by(nflId, displayName, team_name, position_clustered, position, coverage) %>%
     summarise(avg_efo = mean(foae, na.rm = T),
@@ -244,7 +244,7 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
     select('Player' = displayName, 'Clustered Position' = position_clustered, 'Coverage' = coverage,
            'Team' = team_name, 'Avg. EFO' = avg_efo, 'Avg. FOAE' = avg_foae, 'Snaps' = snaps)
   
-  # Plot 6.2
+  # Plot 6.2 - Field Ownership Plot - By Position and Coverage
   data_6_2 <- df_foae %>%
     group_by(nflId, displayName, team_name, position_clustered, position, coverage) %>%
     summarise(avg_foae = mean(control_pct - foae, na.rm = T),
@@ -256,7 +256,7 @@ bdb_save_data_data <- function(example_play_gameId, example_play_playId, example
            player_coverage = paste(displayName, '-', coverage)) %>%
     slice(1:25)
   
-  # Plot 7
+  # Plot 7 - Field Ownership Above Expected by Coverage
   data_7 <- df_foae %>%
     left_join(df_plays %>%
                 select(gameId, playId, epa)) %>%

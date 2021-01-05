@@ -119,5 +119,6 @@ bdb_save_data_data(2018111810, 1888, 11, df_tracking, df_plays, df_tracking_vars
 stopCluster(cl)
 rm(cl)
 
-save.image(file = 'session.RData')
-gc()
+# save data
+# save.image(file = 'session.RData')
+# gc()

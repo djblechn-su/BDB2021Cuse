@@ -15,8 +15,8 @@ bdb_fo_above_expected_results <- function(mod_fo_above_expected, df_control, df_
     left_join(df_coverages_probability) %>%
     dplyr::filter(poss_team == 0) %>%
     na.omit() %>%
-    ungroup() %>%
-    mutate(foae = predict(mod_fo_above_expected, data = .)[['predictions']])
+    ungroup() %>% # get all variables for model
+    mutate(foae = predict(mod_fo_above_expected, data = .)[['predictions']]) # get model predictions
   
   return(df_foae)  
 }

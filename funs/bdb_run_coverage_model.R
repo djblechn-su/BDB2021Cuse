@@ -17,17 +17,17 @@ bdb_run_coverage_model <- function(df_train, cv_number, cv_repeats, hidden_min, 
                   'closest_offensive_player_changes', 'closest_defensive_player_changes',
                   'pre_play_motion', 'position', 'position_clustered', 'prob_lb', 'prob_nb', 'prob_cb', 'prob_s',
                   'offensive_formation', 'offensive_personnel', 'defensive_personnel',
-                  'defenders_in_box', 'number_pass_rushers', 'field_strength')
+                  'defenders_in_box', 'number_pass_rushers', 'field_strength') # model vars
   
-  model_formula <- as.formula(paste('player_coverage ~', paste(model_vars, collapse = ' + ')))
+  model_formula <- as.formula(paste('player_coverage ~', paste(model_vars, collapse = ' + '))) # create formula
   
   fitControl <- trainControl(method = "repeatedcv",
                              number = cv_number,
                              repeats = cv_repeats,
-                             classProbs = TRUE)
+                             classProbs = TRUE) # set training parameters
   
   nnetGrid <- expand.grid(size = seq(from = hidden_min, to = hidden_max, by = 1),
-                          decay = seq(from = decay_min, to = decay_max, by = 0.1))
+                          decay = seq(from = decay_min, to = decay_max, by = 0.1)) # set hidden layer and decay grid
   
   print('Running Model')
   
@@ -38,7 +38,7 @@ bdb_run_coverage_model <- function(df_train, cv_number, cv_repeats, hidden_min, 
                                       trControl = fitControl,
                                       tuneGrid = nnetGrid,
                                       trace = TRUE,
-                                      allowParallel = TRUE)
+                                      allowParallel = TRUE) # train model using parallel computing
   
   return(coverage_model_nnet)
 }
