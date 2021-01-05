@@ -1,7 +1,6 @@
 ---
 title: "Quantifying Pass Coverage in the NFL with Field Ownership Above Expected"
 author: "Dylan Blechner, Evan Weiss, and Greg Ackerman"
-date: "1/4/2021"
 output: github_document
 knit: (function(inputFile, encoding) {rmarkdown::render(inputFile, encoding = encoding, output_file = file.path(dirname(inputFile), 'README.md'), output_dir = getwd())})
 ---
@@ -36,7 +35,7 @@ We then used each player’s rule-based position frequencies, and utilized a Gau
 
 Figure 1A shows each player’s position based on our rules-based methodology for an example play between the [Pittsburgh Steelers and Jacksonville Jaguars](https://www.jaguars.com/video/church-reads-big-ben-for-another-jaguars-int). Each defensive player is lined up in their natural position except for Barry Church who pushes forward from his typical Safety position to play Outside Linebacker. Figure 1B shows the breakdown of each positional cluster based on the percentage of snaps lined up at each rules-based position.
 
-```{r fig1, echo = FALSE, fig.cap = "A caption", out.width = '100%'}
+```{r fig1, echo = FALSE, out.width = '100%'}
 knitr::include_graphics('https://github.com/djblechn-su/BDB2021Cuse/raw/main/plot_images/figure_1.png')
 ```
 
