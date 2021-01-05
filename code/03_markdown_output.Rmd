@@ -19,7 +19,7 @@ The main purpose of this paper is to expand upon previous research in the area o
 
 We developed a multi-class classification model to predict each individual defender’s coverage as deep zone, underneath zone, or man based upon a summary of player actions at the snap, throw, how the player relates to the other defenders on the field, and a derived player position. Defining positions was a priority, as the NFL-listed positions provided several inconsistencies. We began with a rules-based approach to assign positions:
 
-*	**Outside Cornerbacks** as the defender closest to each sideline
+*	**Outside Cornerbacks** is the defender closest to each sideline
 *	In a single high formation (only one safety lined up deep):
 +	The **Free Safety** is a safety lined up more than 11 yards away from the line of scrimmage
 +	The **Strong Safety** is a safety playing 9-11 yards away from the line of scrimmage
@@ -27,7 +27,7 @@ We developed a multi-class classification model to predict each individual defen
 +	The **Free Safety** is lined up on the "strong" side (more receivers lined up) 
 +	The **Strong Safety** is lined up on the “weak” side (fewer receivers lined up)
 +	In a balanced offensive formation, both deep safeties are considered **Free Safeties**
-*	**Nickelbacks** as defenders with a y-coordinate within 1.5 yards of a receiver (while not being lined up as an Outside Cornerback or Safety)
+*	**Nickelbacks** are defenders with a y-coordinate within 1.5 yards of a receiver (while not being lined up as an Outside Cornerback or Safety)
 *	**Outside Linebackers** are players lined up outside the hashes (shallower than safeties, while also not being lined up as an Outside Corner or Nickelback)
 *	**Inside Linebackers** are players lined up between the hashes (shallower than safeties)
 

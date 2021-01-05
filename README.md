@@ -29,7 +29,7 @@ position. Defining positions was a priority, as the NFL-listed positions
 provided several inconsistencies. We began with a rules-based approach
 to assign positions:
 
-  - **Outside Cornerbacks** as the defender closest to each sideline
+  - **Outside Cornerbacks** is the defender closest to each sideline
   - In a single high formation (only one safety lined up deep):
   - The **Free Safety** is a safety lined up more than 11 yards away
     from the line of scrimmage
@@ -42,8 +42,8 @@ to assign positions:
     receivers lined up)
   - In a balanced offensive formation, both deep safeties are considered
     **Free Safeties**
-  - **Nickelbacks** as defenders with a y-coordinate within 1.5 yards of
-    a receiver (while not being lined up as an Outside Cornerback or
+  - **Nickelbacks** are defenders with a y-coordinate within 1.5 yards
+    of a receiver (while not being lined up as an Outside Cornerback or
     Safety)
   - **Outside Linebackers** are players lined up outside the hashes
     (shallower than safeties, while also not being lined up as an
